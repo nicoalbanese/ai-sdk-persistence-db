@@ -75,20 +75,23 @@ export async function POST(req: Request) {
           prefix: "msgs",
           size: 16,
         }),
-        async onFinish({ response }) {
-          const newMessage = appendResponseMessages({
-            messages,
-            responseMessages: response.messages,
-          }).at(-1)!;
+        onStepFinish: async ({ response }) => {
+          try {
+            const newMessage = appendResponseMessages({
+              messages,
+              responseMessages: response.messages,
+            }).at(-1)!;
 
-          await upsertMessage({
-            id: newMessage.id,
-            chatId: chatId,
-            message: newMessage as UIMessage,
-          });
+            await upsertMessage({
+              id: newMessage.id,
+              chatId: chatId,
+              message: newMessage as UIMessage,
+            });
+          } catch (error) {
+            console.error("Error in onStepFinish:", error);
+          }
         },
       });
-
       result.mergeIntoDataStream(dataStream);
     },
     onError: (error) => {
