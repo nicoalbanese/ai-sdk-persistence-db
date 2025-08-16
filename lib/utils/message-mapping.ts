@@ -13,6 +13,8 @@ export const mapUIMessagePartsToDBParts = (
           order: index,
           type: part.type,
           text_text: part.text,
+          state: part.state,
+          providerMetadata: part.providerMetadata,
         };
       case "reasoning":
         return {
@@ -21,6 +23,7 @@ export const mapUIMessagePartsToDBParts = (
           type: part.type,
           reasoning_text: part.text,
           providerMetadata: part.providerMetadata,
+          state: part.state,
         };
       case "file":
         return {
@@ -119,12 +122,15 @@ export const mapDBPartToUIMessagePart = (
       return {
         type: part.type,
         text: part.text_text!,
+        state: part.state,
+        providerMetadata: part.providerMetadata,
       };
     case "reasoning":
       return {
         type: part.type,
         text: part.reasoning_text!,
         providerMetadata: part.providerMetadata ?? undefined,
+        state: part.state,
       };
     case "file":
       return {
