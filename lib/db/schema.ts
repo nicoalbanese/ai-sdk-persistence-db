@@ -10,7 +10,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { MyDataPart, MyUIMessage, MyProviderMetadata } from "../message-type";
-import { generateId, ToolUIPart } from "ai";
+import { generateId, ToolUIPart, type ReasoningUIPart } from "ai";
 import { sql } from "drizzle-orm";
 import {
   getLocationInput,
@@ -61,6 +61,7 @@ export const parts = pgTable(
 
     // Reasoning fields
     reasoning_text: text(),
+    state: varchar().$type<ReasoningUIPart["state"]>(),
 
     // File fields
     file_mediaType: varchar(),
