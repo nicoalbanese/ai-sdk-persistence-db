@@ -11,6 +11,7 @@ import {
 
 export const createChat = async () => {
   const [{ id }] = await db.insert(chats).values({}).returning();
+  // basically we are creating a new chat session in chats table with a empty {} object and returning the id of the new chat session
   return id;
 };
 
@@ -58,10 +59,20 @@ export const loadChat = async (chatId: string): Promise<MyUIMessage[]> => {
     orderBy: (messages, { asc }) => [asc(messages.createdAt)],
   });
 
+  const allowedTypes = new Set<MyUIMessage["parts"][number]["type"]>([
+    "text",
+    "reasoning",
+    "tool-getWeatherInformation",
+    "data-weather",
+    "step-start",
+  ]);
+
   return result.map((message) => ({
     id: message.id,
     role: message.role,
-    parts: message.parts.map((part) => mapDBPartToUIMessagePart(part)),
+    parts: message.parts
+      .filter((part) => allowedTypes.has(part.type))
+      .map((part) => mapDBPartToUIMessagePart(part)),
   }));
 };
 

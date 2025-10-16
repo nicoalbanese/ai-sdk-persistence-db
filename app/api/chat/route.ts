@@ -41,6 +41,7 @@ export async function POST(req: Request) {
       }
 
       // test persisting different chunk types
+      // removed dummy chunks for source-url and source-document
       randomlyWriteChunks(writer);
 
       const result = streamText({
@@ -101,20 +102,5 @@ const randomlyWriteChunks = (writer: UIMessageStreamWriter) => {
     writer.write({ type: "reasoning-end", id: reasoningId });
   }
 
-  if (Math.random() > 0.5) {
-    writer.write({
-      type: "source-url",
-      sourceId: "https://example.com",
-      url: "https://example.com",
-    });
-  }
-
-  if (Math.random() > 0.5) {
-    writer.write({
-      type: "source-document",
-      sourceId: "https://example.com",
-      mediaType: "file",
-      title: "Title",
-    });
-  }
+  // removed unsupported parts: source-url, source-document
 };

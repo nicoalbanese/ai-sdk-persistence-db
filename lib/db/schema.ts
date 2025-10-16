@@ -13,8 +13,6 @@ import { MyDataPart, MyUIMessage, MyProviderMetadata } from "../message-type";
 import { generateId, ToolUIPart } from "ai";
 import { sql } from "drizzle-orm";
 import {
-  getLocationInput,
-  getLocationOutput,
   getWeatherInformationInput,
   getWeatherInformationOutput,
 } from "@/ai/tools";
@@ -40,7 +38,7 @@ export const messages = pgTable(
   (table) => [
     index("messages_chat_id_idx").on(table.chatId),
     index("messages_chat_id_created_at_idx").on(table.chatId, table.createdAt),
-  ],
+  ]
 );
 
 export const parts = pgTable(
@@ -62,22 +60,6 @@ export const parts = pgTable(
     // Reasoning fields
     reasoning_text: text(),
 
-    // File fields
-    file_mediaType: varchar(),
-    file_filename: varchar(), // optional
-    file_url: varchar(),
-
-    // Source url fields
-    source_url_sourceId: varchar(),
-    source_url_url: varchar(),
-    source_url_title: varchar(), // optional
-
-    // Source document fields
-    source_document_sourceId: varchar(),
-    source_document_mediaType: varchar(),
-    source_document_title: varchar(),
-    source_document_filename: varchar(), // optional
-
     // shared tool call columns
     tool_toolCallId: varchar(),
     tool_state: varchar().$type<ToolUIPart["state"]>(),
@@ -88,9 +70,6 @@ export const parts = pgTable(
       jsonb().$type<getWeatherInformationInput>(),
     tool_getWeatherInformation_output:
       jsonb().$type<getWeatherInformationOutput>(),
-
-    tool_getLocation_input: jsonb().$type<getLocationInput>(),
-    tool_getLocation_output: jsonb().$type<getLocationOutput>(),
 
     // Data parts
     data_weather_id: varchar().$defaultFn(() => generateId()),
@@ -110,38 +89,24 @@ export const parts = pgTable(
     check(
       "text_text_required_if_type_is_text",
       // This SQL expression enforces: if type = 'text' then text_text IS NOT NULL
-      sql`CASE WHEN ${t.type} = 'text' THEN ${t.text_text} IS NOT NULL ELSE TRUE END`,
+      sql`CASE WHEN ${t.type} = 'text' THEN ${t.text_text} IS NOT NULL ELSE TRUE END`
     ),
     check(
       "reasoning_text_required_if_type_is_reasoning",
-      sql`CASE WHEN ${t.type} = 'reasoning' THEN ${t.reasoning_text} IS NOT NULL ELSE TRUE END`,
-    ),
-    check(
-      "file_fields_required_if_type_is_file",
-      sql`CASE WHEN ${t.type} = 'file' THEN ${t.file_mediaType} IS NOT NULL AND ${t.file_url} IS NOT NULL ELSE TRUE END`,
-    ),
-    check(
-      "source_url_fields_required_if_type_is_source_url",
-      sql`CASE WHEN ${t.type} = 'source_url' THEN ${t.source_url_sourceId} IS NOT NULL AND ${t.source_url_url} IS NOT NULL ELSE TRUE END`,
-    ),
-    check(
-      "source_document_fields_required_if_type_is_source_document",
-      sql`CASE WHEN ${t.type} = 'source_document' THEN ${t.source_document_sourceId} IS NOT NULL AND ${t.source_document_mediaType} IS NOT NULL AND ${t.source_document_title} IS NOT NULL ELSE TRUE END`,
+      sql`CASE WHEN ${t.type} = 'reasoning' THEN ${t.reasoning_text} IS NOT NULL ELSE TRUE END`
     ),
     check(
       "tool_getWeatherInformation_fields_required",
-      sql`CASE WHEN ${t.type} = 'tool-getWeatherInformation' THEN ${t.tool_toolCallId} IS NOT NULL AND ${t.tool_state} IS NOT NULL ELSE TRUE END`,
-    ),
-    check(
-      "tool_getLocation_fields_required",
-      sql`CASE WHEN ${t.type} = 'tool-getLocation' THEN ${t.tool_toolCallId} IS NOT NULL AND ${t.tool_state} IS NOT NULL ELSE TRUE END`,
+      sql`CASE WHEN ${t.type} = 'tool-getWeatherInformation' THEN ${t.tool_toolCallId} IS NOT NULL AND ${t.tool_state} IS NOT NULL ELSE TRUE END`
     ),
     check(
       "data_weather_fields_required",
-      sql`CASE WHEN ${t.type} = 'data-weather' THEN ${t.data_weather_location} IS NOT NULL AND ${t.data_weather_weather} IS NOT NULL AND ${t.data_weather_temperature} IS NOT NULL ELSE TRUE END`,
+      sql`CASE WHEN ${t.type} = 'data-weather' THEN ${t.data_weather_location} IS NOT NULL AND ${t.data_weather_weather} IS NOT NULL AND ${t.data_weather_temperature} IS NOT NULL ELSE TRUE END`
     ),
-  ],
+  ]
 );
 
 export type MyDBUIMessagePart = typeof parts.$inferInsert;
+// TypeScript type for a row when you insert into the table.
 export type MyDBUIMessagePartSelect = typeof parts.$inferSelect;
+// TypeScript type for a row when you select from the table. This is the type of the result of a query.

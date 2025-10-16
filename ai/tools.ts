@@ -9,21 +9,20 @@ import {
 import z from "zod/v4";
 
 export const getWeatherInformation = (
-  // need to type like this to avoid circular type dependencies
-  // typing here is not necessary, but provides type safety for `writer.write()`
-  // e.g. completion for `data-weather` and type safe `data` object
-  writer: UIMessageStreamWriter<UIMessage<never, MyDataPart>>,
+  writer: UIMessageStreamWriter<UIMessage<never, MyDataPart>>
 ) =>
   tool({
     description: "show the weather in a given city to the user",
     inputSchema: z.object({ city: z.string() }),
     execute: async ({ city }, { toolCallId: id }) => {
+      // dummy data stream writer to show the weather in a given city to the user
       // write initial message part
       writer.write({
         type: "data-weather",
         data: { location: city, weather: undefined, loading: true },
         id,
       });
+      // writer is the object that writes the message parts to the stream
 
       // Add artificial delay of 2 seconds
       await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -65,17 +64,6 @@ export type getWeatherInformationOutput = InferToolOutput<
   ReturnType<typeof getWeatherInformation>
 >;
 
-export const getLocation = tool({
-  description: "Get the user location.",
-  inputSchema: z.object({}),
-  // client side tool requires typing the output schema explicitly
-  outputSchema: z.object({ location: z.string() }),
-});
-
-export type getLocationInput = InferToolInput<typeof getLocation>;
-export type getLocationOutput = InferToolOutput<typeof getLocation>;
-
 export const tools = (writer: UIMessageStreamWriter) => ({
   getWeatherInformation: getWeatherInformation(writer), // pipe in stream writer
-  getLocation,
 });
