@@ -13,17 +13,16 @@
   "dependencies": {
     "@ai-sdk/openai": "2.0.0-beta.9",
     "@ai-sdk/react": "2.0.0-beta.21",
-    "@tailwindcss/typography": "^0.5.16",
     "ai": "5.0.0-beta.21",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.39.3",
-    "marked": "^15.0.7",
     "nanoid": "^5.0.9",
     "next": "^15.1.9",
     "pg": "^8.13.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-markdown": "^9.0.3",
+    "streamdown": "^1.6.7",
+    "tailwindcss-animate": "^1.0.7",
     "zod": "^3.25.61"
   },
   "devDependencies": {
