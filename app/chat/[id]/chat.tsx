@@ -5,7 +5,7 @@ import { DefaultChatTransport, getToolName } from "ai";
 import { useChat } from "@ai-sdk/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { MemoizedMarkdown } from "./memoized-markdown";
+import { Streamdown } from "streamdown";
 import { useEffect, useRef, useState } from "react";
 import { MyUIMessage } from "@/lib/message-type";
 import { Weather } from "./weather";
@@ -77,16 +77,15 @@ export default function Chat({
                     return (
                       <div key={m.id + "-part-" + i} className="text-zinc-400">
                         <label>Reasoning:</label>
-                        <MemoizedMarkdown id={m.id} content={part.text} />
+                        <Streamdown>{part.text}</Streamdown>
                       </div>
                     );
                   case "text":
                     return (
                       <div
                         key={m.id + "-part-" + i}
-                        className="prose dark:text-zinc-300"
                       >
-                        <MemoizedMarkdown id={m.id} content={part.text} />
+                        <Streamdown>{part.text}</Streamdown>
                       </div>
                     );
                   case "data-weather":
