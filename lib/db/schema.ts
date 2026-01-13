@@ -81,7 +81,7 @@ export const parts = pgTable(
     // shared tool call columns
     tool_toolCallId: varchar(),
     tool_state: varchar().$type<ToolUIPart["state"]>(),
-    tool_errorText: varchar().$type<ToolUIPart["state"]>(),
+    tool_errorText: varchar(),
 
     // tools inputs and outputss are stored in separate cols
     tool_getWeatherInformation_input:
